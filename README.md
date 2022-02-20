@@ -32,23 +32,23 @@ The purpose of this Demo is show how to use qESP32 IOT Board for collecting and 
 Thingsboard cloud is used.
 
   Hardware Setup (qESP / qESP32):
-    qESP / qESP32 / qButton IOT board;
-    ESP programmer:
-        option1 : qProg with USB cable;
-        option2 : any ESP chip programmer with jump wires and USB cable;
-    CR123A Lithium Battery.
+    - qESP / qESP32 / qButton IOT board;
+    - ESP programmer:
+        - option1 : qProg with USB cable;
+        - option2 : any ESP chip programmer with jump wires and USB cable;
+    - CR123A Lithium Battery.
 
   Hardware Setup (qButton):
-    qButton IOT board;
-    USB Cable.
+    - qButton IOT board;
+    - USB Cable.
 
   Arduino Setup:
-    "ESP32 Dev Module" to be choosen as board;
-    Arduino Libs to be installed:
-        Adafruit_BME280_Library : https://github.com/adafruit/Adafruit_BME280_Library
-        Adafruit-PWM-Servo-Driver-Library : https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library
-        Adafruit_TSL2591_Library : https://github.com/adafruit/Adafruit_TSL2591_Library
-        ThingsBoard related: https://thingsboard.io/docs/samples/esp32/gpio-control-pico-kit-dht22-sensor/
+    - "ESP32 Dev Module" to be choosen as board;
+    - Arduino Libs to be installed:
+        - Adafruit_BME280_Library : https://github.com/adafruit/Adafruit_BME280_Library
+        - Adafruit-PWM-Servo-Driver-Library : https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library
+        - Adafruit_TSL2591_Library : https://github.com/adafruit/Adafruit_TSL2591_Library
+        - ThingsBoard related: https://thingsboard.io/docs/samples/esp32/gpio-control-pico-kit-dht22-sensor/
 
   Project Options:
     You need to set these defines in user_config.h file:
