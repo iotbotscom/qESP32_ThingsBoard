@@ -11,7 +11,7 @@ The newest qESP32 DIY WiFi Enabled IOT Board is coming to help hobbyists, makers
 - Efficient Power Management: CR123A battery with DC/DC step-up converter;
 - Ultimate sensors set: motion, temperature, humidity, pressure, light;
 - Enhanced indication: PWM controller with five RGB LEDs & sound alert;
-- Developer HW extensions: I2C&Power JST connector and Add-On Boards interface.
+- Developer HW extensions: I2C&Power JST connector and Add-On Boards interface;
 - Open source tools and environments: Arduino IDE & Esperssif SDK compatible.
 
 Built-in Features:
@@ -32,11 +32,11 @@ The purpose of this Demo is show how to use qESP32 IOT Board for collecting and 
 Thingsboard cloud is used.
 
 Hardware Setup (qESP / qESP32):
- qESP / qESP32 / qButton IOT board;
- ESP programmer:
-  option1 : qProg with USB cable;
-  option2 : any ESP chip programmer with jump wires and USB cable;
- CR123A Lithium Battery.
+ - qESP / qESP32 / qButton IOT board;
+ - ESP programmer:
+  - option1 : qProg with USB cable;
+  - option2 : any ESP chip programmer with jump wires and USB cable;
+ - CR123A Lithium Battery.
 
   Hardware Setup (qButton):
     - qButton IOT board;
