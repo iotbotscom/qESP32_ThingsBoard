@@ -34,8 +34,8 @@ Thingsboard cloud is used.
 Hardware Setup (qESP / qESP32):
  - qESP / qESP32 / qButton IOT board;
  - ESP programmer:
-  -- option1 : qProg with USB cable;
-  -- option2 : any ESP chip programmer with jump wires and USB cable;
+  - - option1 : qProg with USB cable;
+  - - option2 : any ESP chip programmer with jump wires and USB cable;
  - CR123A Lithium Battery.
 
   Hardware Setup (qButton):
