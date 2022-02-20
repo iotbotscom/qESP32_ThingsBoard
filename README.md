@@ -31,12 +31,12 @@ ThingBoard Demo:
 The purpose of this Demo is show how to use qESP32 IOT Board for collecting and publishing data from sensors embedded : Motion, Light, Temperature, Humidity and Pressure.
 Thingsboard cloud is used.
 
-  Hardware Setup (qESP / qESP32):
-    - qESP / qESP32 / qButton IOT board;
-    - ESP programmer:
-        - option1 : qProg with USB cable;
-        - option2 : any ESP chip programmer with jump wires and USB cable;
-    - CR123A Lithium Battery.
+Hardware Setup (qESP / qESP32):
+ qESP / qESP32 / qButton IOT board;
+ ESP programmer:
+  option1 : qProg with USB cable;
+  option2 : any ESP chip programmer with jump wires and USB cable;
+ CR123A Lithium Battery.
 
   Hardware Setup (qButton):
     - qButton IOT board;
