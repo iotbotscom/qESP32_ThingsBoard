@@ -4,10 +4,10 @@
 /*---- Include files -------------------------------------------------------------------*/
 
 /*---- Defines  ------------------------------------------------------------------------*/
-#define WIFI_SSID                       "Alexander-A"
-#define WIFI_PASS                       "Alexander_A"
+#define WIFI_SSID                       "MY_WIFI_SSID"
+#define WIFI_PASS                       "MY_WIFI_PASS"
 
-#define CLOUD_THINGSBOARD_TOKEN         "nvUlqzelsJlNH2S1Gqf6"
+#define CLOUD_THINGSBOARD_TOKEN         "THINGSBOARD_TOKEN"
 #define CLOUD_THINGSBOARD_SERVER        "thingsboard.cloud"
 #define CLOUD_THINGSBOARD_PORT          80
 
