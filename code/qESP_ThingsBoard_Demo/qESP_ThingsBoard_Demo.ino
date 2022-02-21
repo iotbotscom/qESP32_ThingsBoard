@@ -699,6 +699,9 @@ void go_to_bed(void )
 
         Serial.println("\r\nMove to Sleep");
 
+        // TPS61291DRV DC/DC Off
+        digitalWrite(HIGH_PWR_ON_PIN, LOW);
+
         esp_deep_sleep_start();
     }
 }
