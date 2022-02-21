@@ -35,6 +35,7 @@ Author                          Date                Revision NUmber          Des
 ------------------------------------------------------------------------------------
 
 iotbotscom                02/18/2022               1.0.0                        Initial release
+iotbotscom                02/21/2022               1.0.1                        Battery Reading was added
 
 *****************************************************************************/
 
@@ -129,12 +130,42 @@ iotbotscom                02/18/2022               1.0.0                        
 #define RGB_LED5_CHANNEL_GREEN  9
 #define RGB_LED5_CHANNEL_BLUE   10
 
+//ADC
+#define ADC_BUF_MAX             8
+
+#if ((defined QESP_IOT_BOARD_TYPE) && (QESP_IOT_BOARD_TYPE == QESP_IOT_BOARD_TYPE_QESP32))
+#define ADC_BATTERY_VOLTAGE_NORMAL          3000 // 3000mV
+#define ADC_POWER_DOWN_VOLTAGE_TRESHOULD    2600 // 2600mV
+
+#define ADC_REFERENCE_VOLTAGE               3300 // 1100mV
+#define ADC_CODE_MAX                        4095 // 12 bits
+#define ADC_FULL_SCALE                      4096.0 // 12 bits
+#define ADC_DIVIDER_VALUE                   2.3 // 10k / 10k (Trimmed)
+#elif ((defined QESP_IOT_BOARD_TYPE) && (QESP_IOT_BOARD_TYPE == QESP_IOT_BOARD_TYPE_QBUTTON))
+#define ADC_BATTERY_VOLTAGE_NORMAL          4200 // 3000mV
+#define ADC_POWER_DOWN_VOLTAGE_TRESHOULD    3400 // 2600mV
+
+#define ADC_REFERENCE_VOLTAGE               3300 // 1100mV
+#define ADC_CODE_MAX                        4095 // 12 bits
+#define ADC_FULL_SCALE                      4096.0 // 12 bits
+#define ADC_DIVIDER_VALUE                   1.45 // 10k / 20k (Trimmed)
+#else
+#define ADC_BATTERY_VOLTAGE_NORMAL          3000 // 3000mV
+#define ADC_POWER_DOWN_VOLTAGE_TRESHOULD    2600 // 2600mV
+
+#define ADC_REFERENCE_VOLTAGE               1000 // 1000mV
+#define ADC_CODE_MAX                        1023 // 10 bits
+#define ADC_FULL_SCALE                      1024.0 // 10 bits
+#define ADC_DIVIDER_VALUE                   4.15 // 330k / 100k (Trimmed)
+#endif
+
+
 /*---- Typedefs ------------------------------------------------------------------------*/
 
 /*---- Variables -----------------------------------------------------------------------*/
 // Devices status
 int sleep_mode = QESP_IOT_BOARD_SLEEP_MODE_TYPE;
-int sleep_timer_sec = 60; // sec
+int sleep_timer_sec = 600; // sec
 bool is_bme280_on = false;
 bool is_lis3dh_on = false;
 bool is_tsl2591_on = false;
@@ -151,7 +182,8 @@ uint16_t tsl2591_lux = 0;
 int16_t lis3dh_data_x =0;
 int16_t lis3dh_data_y =0;
 int16_t lis3dh_data_z =0;
-int int_battery = 0;
+int battery_mV = 0;
+int battery_percent = 0;
 
 // Interrupts
 bool user_key_interrupt_status = false;
@@ -162,6 +194,10 @@ bool xint2_interrupt_status = false;
 Adafruit_PWMServoDriver pca9685 = Adafruit_PWMServoDriver(PCA9685_ADDRESS_I2C, Wire);
 Adafruit_BME280 bme280;
 Adafruit_TSL2591 tsl2591 = Adafruit_TSL2591(2591);
+
+// ADC
+uint16_t adc_buf[ADC_BUF_MAX];
+uint8_t adc_buf_idx;
 
 // WiFi
 int8_t rssi = 0;
@@ -182,6 +218,11 @@ void get_my_senses(void );
 void share_my_senses(void );
 void go_to_bed(void );
 void sysled_blink(void );
+
+void bme280_get_data(void );
+void tsl2591_get_data(void );
+void lis3dh_get_data(void );
+void get_battery(void );
 
 bool lis3dh_read_reg(uint8_t RegisterAddr, uint8_t NumByteToRead, uint8_t * p_RegisterValue);
 bool lis3dh_write_reg(uint8_t RegisterAddr, uint8_t NumByteToWrite, uint8_t * p_RegisterValue);
@@ -530,6 +571,8 @@ void get_my_senses(void )
         lis3dh_get_data();
     }
 
+    get_battery();
+
     if(user_key_interrupt_status == true)
     {
         user_key_interrupt_status = false;
@@ -643,6 +686,11 @@ void share_my_senses(void )
     tb.sendTelemetryInt("Motion-X", lis3dh_data_x);
     tb.sendTelemetryInt("Motion-Y", lis3dh_data_y);
     tb.sendTelemetryInt("Motion-Z", lis3dh_data_z);
+    tb.sendTelemetryInt("Battery_mV", battery_mV);
+    tb.sendTelemetryInt("Battery_percent", battery_percent);
+
+    Serial.print("\r\nData Published\r\n");
+
 }
 
 void go_to_bed(void )
@@ -795,6 +843,64 @@ void lis3dh_get_data(void )
     {
         Serial.println(" Not Ready");
     }
+}
+
+void get_battery(void )
+{
+    uint16_t adc = 0;
+    uint8_t i;
+
+#if ((defined QESP_IOT_BOARD_TYPE) && (QESP_IOT_BOARD_TYPE == QESP_IOT_BOARD_TYPE_QBUTTON))
+    pinMode(LOW_BAT_EN_PIN, OUTPUT);
+    digitalWrite(LOW_BAT_EN_PIN, HIGH);
+#else
+    pinMode(LOW_BAT_EN_PIN, OUTPUT);
+    digitalWrite(LOW_BAT_EN_PIN, LOW);
+#endif
+
+    delay(10);
+
+    Serial.println("\r\nBattery: ");
+
+    // Read ADC
+    for(i = 0; i < ADC_BUF_MAX; i++)
+    {
+        adc += analogRead(BATTERY_PIN);
+        delay(1);
+    }
+
+#if ((defined QESP_IOT_BOARD_TYPE) && (QESP_IOT_BOARD_TYPE == QESP_IOT_BOARD_TYPE_QBUTTON))
+    pinMode(LOW_BAT_EN_PIN, OUTPUT);
+    digitalWrite(LOW_BAT_EN_PIN, LOW);
+#else
+    digitalWrite(LOW_BAT_EN_PIN, HIGH);
+    pinMode(K1_PIN, INPUT_PULLUP);
+#endif
+
+    adc /= 8;
+
+    Serial.print(" ADC Code: ");
+    Serial.println(adc);
+
+    battery_mV = (uint16_t)((ADC_REFERENCE_VOLTAGE / ADC_FULL_SCALE) *(float)adc * ADC_DIVIDER_VALUE);
+
+    if(battery_mV >= ADC_POWER_DOWN_VOLTAGE_TRESHOULD)
+    {
+        battery_percent = (uint16_t)((((float)(battery_mV - ADC_POWER_DOWN_VOLTAGE_TRESHOULD)) / (ADC_BATTERY_VOLTAGE_NORMAL - ADC_POWER_DOWN_VOLTAGE_TRESHOULD)) * 100.0);
+        if(battery_percent > 100)
+        {
+            battery_percent = 100;
+        }
+    }
+    else
+    {
+        battery_percent = 0;
+    }
+
+    Serial.print(" Battery, mV: ");
+    Serial.println(battery_mV);
+    Serial.print(" Battery, percent: ");
+    Serial.println(battery_percent);
 }
 
 void sysled_blink(void )
